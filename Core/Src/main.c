@@ -103,6 +103,8 @@ int main(void)
   {
     AHT20_Read(&hi2c1, &temperature, &humidity);
     printf("Temperature: %.2f °C, Humidity: %.2f %%\r\n", temperature, humidity);
+    
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

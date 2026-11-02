@@ -6,7 +6,7 @@ void AHT20_Init(I2C_HandleTypeDef *hi2c) {
     uint8_t readbuffer;
     HAL_Delay(40); // Wait for the sensor to power up
     HAL_I2C_Master_Receive(hi2c, AHT20_ADDRESS , &readbuffer, 1, HAL_MAX_DELAY);
-    if(readbuffer & 0x08==0x00)
+    if((readbuffer & 0x08)==0x00)
     {
       uint8_t init_cmd[3] = {0xBE, 0x08, 0x00}; // Initialization command
       HAL_I2C_Master_Transmit(hi2c, AHT20_ADDRESS , init_cmd, 3, HAL_MAX_DELAY);
@@ -21,7 +21,7 @@ void AHT20_Read(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity) {
     uint8_t data[6];
     HAL_I2C_Master_Receive(hi2c, AHT20_ADDRESS , data, 6, HAL_MAX_DELAY);
 
-    if(data[0] & 0x80) {
+    if((data[0] & 0x80)==0x80) {
         // Measurement not completed, handle error
         *temperature = 0.0f;
         *humidity = 0.0f;
