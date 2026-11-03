@@ -22,7 +22,7 @@ void AHT20_Read(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity) {
     HAL_I2C_Master_Transmit(hi2c, AHT20_ADDRESS , trigger_cmd, 3, HAL_MAX_DELAY);
     HAL_Delay(75); // Wait for the measurement to complete
 
-    HAL_I2C_Master_Receive_IT(hi2c, AHT20_ADDRESS , data, 6);
+    HAL_I2C_Master_Receive(hi2c, AHT20_ADDRESS , data, 6, HAL_MAX_DELAY);
      if((data[0] & 0x80)==0x80) {
         // Measurement not completed, handle error
         *temperature = 0.0f;
@@ -44,13 +44,13 @@ void AHT20_Read(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity) {
 
 void AHT20_Measure(I2C_HandleTypeDef *hi2c) {
     static uint8_t trigger_cmd[3] = {0xAC, 0x33, 0x00}; // Trigger measurement command
-    HAL_I2C_Master_Transmit_IT(hi2c, AHT20_ADDRESS , trigger_cmd, 3);
+    HAL_I2C_Master_Transmit_DMA(hi2c, AHT20_ADDRESS , trigger_cmd, 3);
 }
 
 void AHT20_Get(I2C_HandleTypeDef *hi2c)
 {
 
-    HAL_I2C_Master_Receive_IT(hi2c, AHT20_ADDRESS , data, 6);
+    HAL_I2C_Master_Receive_DMA(hi2c, AHT20_ADDRESS , data, 6);
 }
 
 void AHT20_Analysis(float *temperature, float *humidity)
