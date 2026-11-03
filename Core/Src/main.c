@@ -47,7 +47,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+// 0：初始状态 发送测量命令 1：正在发送测量命令 2：测量命令发送完成 等待75毫秒后读取AHT20数据 3：读取中 4：读取完成 解析并展示数据然后恢复到初始状态
+uint8_t aht20_state = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,10 +102,23 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    AHT20_Read(&hi2c1, &temperature, &humidity);
-    printf("Temperature: %.2f °C, Humidity: %.2f %%\r\n", temperature, humidity);
+    if(aht20_state == 0) {
+        AHT20_Measure(&hi2c1);
+        aht20_state = 1;
+    } else if(aht20_state == 2) {
+      HAL_Delay(75); // Wait for the measurement to complete
+      AHT20_Get(&hi2c1);
+      aht20_state = 3;
+    } else if(aht20_state == 4) {
+      AHT20_Analysis(&temperature, &humidity);
+      printf("Temperature: %.2f °C, Humidity: %.2f %%\r\n", temperature, humidity);
+      aht20_state = 0;
+      HAL_Delay(1000);
+    }
+    // AHT20_Read(&hi2c1, &temperature, &humidity);
+    // printf("Temperature: %.2f °C, Humidity: %.2f %%\r\n", temperature, humidity);
     
-    HAL_Delay(1000);
+    // HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
